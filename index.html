@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mari & Stefano · 11 Ottobre 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,600&family=Cinzel:wght@400;500&family=Lato:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --hero-bg: #461413;
+  --stone-bg: #e8e0d5;
+  --stone-mid: #d4c9bb;
+  --stone-dark: #b5a898;
+  --parchment: #f5efe6;
+  --rust: #b85c38;
+  --rust-deep: #8c3d22;
+  --terracotta: #c97c52;
+  --sage: #7a8c6e;
+  --sage-deep: #4e5f44;
+  --cream: #faf6f0;
+  --text: #2c2419;
+  --text-mid: #6b5d51;
+  --text-light: #9a8c82;
+  --gold: #c8a460;
+  --gold-light: #e8c98a;
+  --warm-white: #f9f4ed;
+}
+html { scroll-behavior: smooth; }
+body { font-family:'Lato',sans-serif; background-color:var(--parchment); color:var(--text); overflow-x:hidden; }
+
+/* ── NAV ── */
+.nav {
+  position:fixed;
+  top:0; left:0; right:0;
+  z-index:1000;
+  padding:0 2rem;
+  height:60px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:transparent;
+  transition:background 0.4s, backdrop-filter 0.4s;
+}
+.nav.scrolled {
+  background:rgba(70,20,19,0.92);
+  backdrop-filter:blur(8px);
+}
+.nav-logo {
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;
+  font-weight:300;
+  font-size:1.15rem;
+  color:rgba(255,255,255,0.75);
+  text-decoration:none;
+  letter-spacing:0.05em;
+}
+.nav-toggle {
+  width:36px; height:36px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  cursor:pointer;
+  background:none;
+  border:none;
+  padding:4px;
+  position:relative;
+  z-index:1002;
+}
+.nav-toggle .bar {
+  width:22px;
+  height:1.5px;
+  background:rgba(255,255,255,0.75);
+  transition:all 0.35s ease;
+  transform-origin:center;
+}
+/* Heart on hover */
+.nav-toggle:hover .bars-wrap { opacity:0; }
+.nav-toggle:hover .heart-icon { opacity:1; transform:scale(1); }
+.bars-wrap { transition:opacity 0.25s; display:flex; flex-direction:column; align-items:center; gap:6px; }
+.heart-icon {
+  position:absolute;
+  opacity:0;
+  transform:scale(0.6);
+  transition:opacity 0.25s, transform 0.25s;
+  color:var(--gold);
+  font-size:1.4rem;
+  line-height:1;
+}
+/* Open state */
+.nav-toggle.open .bars-wrap { opacity:0; }
+.nav-toggle.open .heart-icon { opacity:1; transform:scale(1); color:var(--gold-light); }
+
+/* Overlay menu */
+.nav-overlay {
+  position:fixed;
+  inset:0;
+  z-index:999;
+  background:rgba(70,20,19,0.97);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='6' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.18'/%3E%3C/svg%3E");
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:0.4rem;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.35s ease;
+}
+.nav-overlay.open { opacity:1; pointer-events:all; }
+.nav-overlay::before {
+  content:'';
+  position:absolute;
+  bottom:0; left:0; right:0;
+  height:3px;
+  background:linear-gradient(90deg,transparent,var(--gold) 30%,var(--gold-light) 50%,var(--gold) 70%,transparent);
+}
+.nav-link {
+  font-family:'Cormorant Garamond',serif;
+  font-weight:300;
+  font-style:italic;
+  font-size:clamp(2rem, 5vw, 3rem);
+  color:rgba(255,255,255,0.75);
+  text-decoration:none;
+  letter-spacing:0.05em;
+  line-height:1.4;
+  transition:color 0.2s, transform 0.2s;
+  transform:translateY(10px);
+  opacity:0;
+  transition:color 0.2s, transform 0.35s ease, opacity 0.35s ease;
+}
+.nav-overlay.open .nav-link {
+  opacity:1;
+  transform:none;
+}
+.nav-overlay.open .nav-link:nth-child(1) { transition-delay:0.05s }
+.nav-overlay.open .nav-link:nth-child(2) { transition-delay:0.1s }
+.nav-overlay.open .nav-link:nth-child(3) { transition-delay:0.15s }
+.nav-overlay.open .nav-link:nth-child(4) { transition-delay:0.2s }
+.nav-overlay.open .nav-link:nth-child(5) { transition-delay:0.25s }
+.nav-overlay.open .nav-link:nth-child(6) { transition-delay:0.3s }
+.nav-overlay.open .nav-link:nth-child(7) { transition-delay:0.35s }
+.nav-overlay.open .nav-link:nth-child(8) { transition-delay:0.4s }
+.nav-link:hover { color:var(--gold); transform:translateX(6px); }
+.nav-rule { width:40px; height:1px; background:rgba(200,164,96,0.35); margin:0.8rem 0; }
+
+/* ── HERO ── */
+.hero {
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:5rem 2rem 6rem;
+  background-color:var(--hero-bg);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.45' numOctaves='6' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='600' height='600' filter='url(%23n)' opacity='0.18'/%3E%3C/svg%3E");
+  background-size:300px 300px;
+  position:relative;
+  overflow:hidden;
+}
+.hero::after {
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%,rgba(200,164,96,0.12) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 40% at 15% 100%,rgba(122,140,110,0.10) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 40% at 85% 100%,rgba(200,164,96,0.08) 0%,transparent 60%);
+  pointer-events:none;
+}
+.hero-top { position:absolute; top:0; left:0; right:0; height:5px; background:linear-gradient(90deg,transparent,var(--rust) 25%,var(--gold) 50%,var(--rust) 75%,transparent); }
+.hero-inner { position:relative; z-index:3; display:flex; flex-direction:column; align-items:center; }
+.hero-eyebrow { font-family:'Cinzel',serif; font-size:clamp(0.5rem,1.2vw,0.68rem); letter-spacing:0.5em; color:var(--gold-light); text-transform:uppercase; margin-bottom:2.5rem; opacity:0.8; }
+.hero-floral { width:clamp(200px,38vw,270px); margin-bottom:1.5rem; opacity:0.72; }
+.hero-names { font-family:'Cormorant Garamond',serif; font-weight:300; font-style:italic; font-size:clamp(5rem,16vw,11rem); line-height:0.85; color:var(--warm-white); }
+.hero-amp { display:block; font-size:clamp(3.5rem,10vw,7rem); color:var(--gold); line-height:1.2; font-style:normal; }
+.hero-rule { width:clamp(100px,22vw,180px); height:1px; background:linear-gradient(90deg,transparent,var(--gold),transparent); margin:2.5rem auto; }
+.hero-date-row { display:flex; align-items:center; gap:1rem; flex-wrap:wrap; justify-content:center; }
+.hero-date-piece { font-family:'Cinzel',serif; font-size:clamp(0.65rem,1.5vw,0.88rem); color:rgba(255,255,255,0.55); letter-spacing:0.2em; text-transform:uppercase; }
+.hero-dot { width:4px; height:4px; border-radius:50%; background:var(--gold); opacity:0.7; }
+.hero-location { margin-top:1rem; font-family:'Lato',sans-serif; font-weight:200; font-size:0.7rem; letter-spacing:0.35em; text-transform:uppercase; color:rgba(255,255,255,0.3); }
+.scroll-hint { position:absolute; bottom:2.5rem; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:6px; opacity:0.3; animation:bounce 2.2s ease-in-out infinite; z-index:3; }
+.scroll-hint span { font-size:0.55rem; letter-spacing:0.35em; text-transform:uppercase; color:#fff; }
+@keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+
+/* ── LETTER SECTION ── */
+.letter-section {
+  background:var(--parchment);
+  padding:7rem 2rem;
+  position:relative;
+}
+.letter-section::before {
+  content:'';
+  position:absolute;
+  top:0; left:0; right:0;
+  height:4px;
+  background:linear-gradient(90deg,transparent,var(--terracotta) 30%,var(--gold) 50%,var(--terracotta) 70%,transparent);
+}
+.letter-inner {
+  max-width:680px;
+  margin:0 auto;
+}
+.letter-tag {
+  display:block;
+  text-align:center;
+  font-family:'Cinzel',serif;
+  font-size:0.6rem;
+  letter-spacing:0.5em;
+  text-transform:uppercase;
+  color:var(--rust);
+  margin-bottom:1rem;
+}
+.letter-rule { width:60px; height:1px; background:var(--gold); margin:1.5rem auto 3rem; }
+.letter-body {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(1.25rem, 2.6vw, 1.5rem);
+  font-weight:400;
+  line-height:1.95;
+  color:var(--text);
+  white-space:pre-line;
+}
+.letter-body em {
+  font-style:italic;
+  color:var(--rust-deep);
+}
+.letter-sig {
+  display:block;
+  text-align:right;
+  margin-top:2.5rem;
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;
+  font-size:1.1rem;
+  color:var(--text-mid);
+}
+
+/* ── SECTION BASE ── */
+.sw { max-width:820px; margin:0 auto; padding:6rem 2rem; }
+.section-tag { display:block; text-align:center; font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.5em; text-transform:uppercase; color:var(--rust); margin-bottom:0.7rem; }
+.section-title { font-family:'Cormorant Garamond',serif; font-weight:300; font-style:italic; font-size:clamp(2rem,5vw,3rem); text-align:center; color:var(--text); line-height:1.2; }
+.section-rule { width:60px; height:1px; background:var(--gold); margin:1.5rem auto 3rem; }
+
+/* ── QUOTE ── */
+.quote-section { background:var(--cream); padding:6rem 2rem; text-align:center; }
+.quote-mark { font-family:'Cormorant Garamond',serif; font-size:5rem; line-height:0.5; color:var(--gold); opacity:0.3; display:block; margin-bottom:1rem; }
+.quote-text { font-family:'Cormorant Garamond',serif; font-size:clamp(1.4rem,3.5vw,2rem); font-weight:300; font-style:italic; line-height:1.65; color:var(--text); max-width:620px; margin:0 auto; }
+.quote-author { display:block; margin-top:1.8rem; font-family:'Lato',sans-serif; font-weight:200; font-size:0.68rem; letter-spacing:0.35em; text-transform:uppercase; color:var(--text-light); }
+
+/* ── COUNTDOWN ── */
+.cd-section {
+  background-color:var(--sage-deep);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+  padding:5.5rem 2rem;
+  text-align:center;
+  position:relative;
+}
+.cd-section::before,.cd-section::after { content:''; position:absolute; left:0; right:0; height:4px; background:linear-gradient(90deg,transparent,var(--gold) 30%,var(--gold-light) 50%,var(--gold) 70%,transparent); }
+.cd-section::before{top:0} .cd-section::after{bottom:0}
+.cd-tag { color:rgba(255,255,255,0.45); }
+.cd-title { font-family:'Cormorant Garamond',serif; font-weight:300; font-style:italic; font-size:clamp(1.6rem,4vw,2.4rem); color:rgba(255,255,255,0.88); margin-bottom:3rem; }
+.cd-grid { display:flex; justify-content:center; align-items:flex-start; gap:clamp(0.8rem,3.5vw,2.8rem); flex-wrap:wrap; }
+.cd-item { text-align:center; }
+.cd-num { font-family:'Cormorant Garamond',serif; font-size:clamp(3.5rem,9vw,6rem); font-weight:300; color:#fff; line-height:1; display:block; min-width:70px; }
+.cd-lbl { font-family:'Lato',sans-serif; font-weight:200; font-size:0.6rem; letter-spacing:0.35em; text-transform:uppercase; color:rgba(255,255,255,0.4); margin-top:0.4rem; display:block; }
+.cd-colon { font-family:'Cormorant Garamond',serif; font-size:clamp(3rem,7vw,5rem); color:var(--gold); line-height:1; opacity:0.65; }
+
+/* ── INFO CARDS ── */
+.info-band {
+  background:var(--stone-bg);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='500'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='500' height='500' filter='url(%23n)' opacity='0.18'/%3E%3C/svg%3E");
+  background-size:250px 250px;
+}
+.cards-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1.5rem; }
+.info-card { background:var(--warm-white); border:1px solid rgba(180,155,130,0.3); border-top:3px solid var(--rust); padding:2.5rem 1.8rem; text-align:center; position:relative; overflow:hidden; }
+.info-card::after { content:''; position:absolute; bottom:0; right:0; width:36px; height:36px; background:var(--stone-bg); clip-path:polygon(100% 0,100% 100%,0 100%); opacity:0.4; }
+.info-card .ic-icon { width:36px; height:36px; margin:0 auto 1.2rem; display:block; }
+.info-card h3 { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.45em; text-transform:uppercase; color:var(--rust); margin-bottom:0.9rem; }
+.info-card p { font-family:'Cormorant Garamond',serif; font-size:1.35rem; font-weight:400; line-height:1.5; color:var(--text); }
+.info-card .sub { font-family:'Lato',sans-serif; font-size:0.75rem; font-weight:300; color:var(--text-light); margin-top:0.5rem; line-height:1.6; }
+
+/* ── TIMELINE (nascosta temporaneamente) ── */
+.tl-section { display:none; }
+.tl-wrap { position:relative; max-width:640px; margin:0 auto; padding:1rem 0; }
+.tl-wrap::before { content:''; position:absolute; left:50%; top:0; bottom:0; width:1px; background:linear-gradient(180deg,transparent,var(--gold) 8%,var(--gold) 92%,transparent); transform:translateX(-50%); }
+.tl-item { display:flex; align-items:flex-start; margin-bottom:3rem; position:relative; opacity:0; transform:translateY(18px); transition:opacity 0.7s ease,transform 0.7s ease; }
+.tl-item.visible { opacity:1; transform:none; }
+.tl-item:nth-child(odd) { flex-direction:row; }
+.tl-item:nth-child(even) { flex-direction:row-reverse; }
+.tl-content { width:calc(50% - 28px); background:var(--warm-white); border:1px solid rgba(180,155,130,0.3); padding:1.4rem 1.6rem; }
+.tl-item:nth-child(odd) .tl-content { margin-right:28px; text-align:right; }
+.tl-item:nth-child(even) .tl-content { margin-left:28px; text-align:left; }
+.tl-item:nth-child(odd) .tl-content::after { content:''; position:absolute; right:-7px; top:18px; width:0; height:0; border-top:7px solid transparent; border-bottom:7px solid transparent; border-left:7px solid var(--warm-white); }
+.tl-item:nth-child(even) .tl-content::after { content:''; position:absolute; left:-7px; top:18px; width:0; height:0; border-top:7px solid transparent; border-bottom:7px solid transparent; border-right:7px solid var(--warm-white); }
+.tl-dot { position:absolute; left:50%; transform:translateX(-50%); width:13px; height:13px; border-radius:50%; background:var(--rust); border:2px solid var(--warm-white); outline:1px solid var(--rust); top:18px; z-index:2; }
+.tl-time { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.3em; color:var(--rust); display:block; margin-bottom:0.3rem; }
+.tl-label { font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-weight:400; color:var(--text); line-height:1.3; }
+.tl-desc { font-family:'Lato',sans-serif; font-size:0.73rem; font-weight:300; color:var(--text-light); margin-top:0.3rem; line-height:1.5; }
+.tl-emoji { font-size:1rem; display:block; margin-bottom:0.3rem; }
+
+/* ── DARK STONE BANNER (dresscode) — stesso sfondo del countdown ── */
+.dark-band {
+  background-color:var(--sage-deep);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+  position:relative;
+}
+.dark-band::before,.dark-band::after { content:''; position:absolute; left:0; right:0; height:4px; background:linear-gradient(90deg,transparent,var(--gold) 30%,var(--gold-light) 50%,var(--gold) 70%,transparent); }
+.dark-band::before{top:0} .dark-band::after{bottom:0}
+.dresscode-emoji { font-size:3.5rem; display:block; margin:0 auto 1.5rem; }
+.dresscode-text { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:clamp(2rem,5vw,3rem); font-weight:300; color:rgba(255,255,255,0.9); text-align:center; line-height:1.3; }
+.dresscode-sub { font-family:'Lato',sans-serif; font-weight:200; font-size:0.76rem; letter-spacing:0.2em; color:rgba(255,255,255,0.38); text-align:center; margin-top:1rem; }
+
+/* ── GIFT ── */
+.gift-band {
+  background:var(--stone-bg);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.14'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+}
+.gift-card { background:var(--warm-white); border:1px solid rgba(180,155,130,0.35); border-left:4px solid var(--gold); padding:2.8rem 2.8rem 2.8rem 3rem; max-width:600px; margin:0 auto; }
+.gift-text { font-family:'Cormorant Garamond',serif; font-size:clamp(1.25rem, 2.6vw, 1.5rem); font-weight:400; font-style:italic; line-height:1.9; color:var(--text); white-space:pre-line; }
+.gift-iban { margin-top:2rem; padding-top:1.5rem; border-top:1px solid var(--stone-mid); }
+.gift-iban p { font-family:'Lato',sans-serif; font-size:0.82rem; font-weight:300; color:var(--text-mid); line-height:2; letter-spacing:0.05em; }
+.gift-iban strong { font-weight:400; color:var(--text); }
+
+/* ── RSVP ── */
+.rsvp-section {
+  background:var(--hero-bg);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='6' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+  position:relative;
+  padding:6rem 2rem;
+  text-align:center;
+}
+.rsvp-section::before,.rsvp-section::after { content:''; position:absolute; left:0; right:0; height:4px; background:linear-gradient(90deg,transparent,var(--gold) 30%,var(--gold-light) 50%,var(--gold) 70%,transparent); }
+.rsvp-section::before{top:0} .rsvp-section::after{bottom:0}
+.rsvp-inner { max-width:560px; margin:0 auto; }
+.rsvp-desc {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(1.1rem,2.5vw,1.35rem);
+  font-style:italic;
+  font-weight:300;
+  line-height:1.8;
+  color:rgba(255,255,255,0.72);
+  margin-bottom:3rem;
+}
+.rsvp-btn {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:0.8rem;
+  font-family:'Cinzel',serif;
+  font-size:0.72rem;
+  font-weight:400;
+  letter-spacing:0.4em;
+  text-transform:uppercase;
+  color:var(--hero-bg);
+  background:var(--gold);
+  border:none;
+  padding:1.1rem 2.8rem;
+  text-decoration:none;
+  cursor:pointer;
+  transition:background 0.25s, transform 0.15s, box-shadow 0.25s;
+  box-shadow:0 4px 20px rgba(200,164,96,0.25);
+}
+.rsvp-btn:hover { background:var(--gold-light); transform:translateY(-2px); box-shadow:0 6px 28px rgba(200,164,96,0.35); }
+.rsvp-btn:active { transform:scale(0.97); }
+.rsvp-btn svg { width:20px; height:20px; flex-shrink:0; }
+.rsvp-note {
+  margin-top:1.8rem;
+  font-family:'Lato',sans-serif;
+  font-weight:200;
+  font-size:0.68rem;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.28);
+}
+
+/* ── ALLERGIE ── */
+.allergy-section { background:var(--cream); }
+.allergy-box { max-width:560px; margin:0 auto; text-align:center; }
+.allergy-icon { font-size:2.5rem; display:block; margin-bottom:1.5rem; }
+.allergy-desc { font-family:'Lato',sans-serif; font-weight:300; font-size:0.87rem; line-height:1.85; color:var(--text-mid); margin-bottom:2.5rem; }
+.allergy-form { display:flex; flex-direction:column; gap:1rem; text-align:left; }
+.fg { display:flex; flex-direction:column; gap:0.4rem; }
+.fg label { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.4em; text-transform:uppercase; color:var(--rust); }
+.fg input,.fg textarea,.fg select { font-family:'Lato',sans-serif; font-size:0.87rem; font-weight:300; color:var(--text); background:var(--warm-white); border:1px solid rgba(180,155,130,0.45); border-bottom:2px solid var(--stone-dark); padding:0.75rem 1rem; outline:none; transition:border-color 0.25s; border-radius:0; width:100%; resize:none; appearance:none; }
+.fg input:focus,.fg textarea:focus,.fg select:focus { border-bottom-color:var(--rust); }
+.fg-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.btn-sub { font-family:'Cinzel',serif; font-size:0.63rem; letter-spacing:0.4em; text-transform:uppercase; color:var(--warm-white); background:var(--rust-deep); border:none; padding:1rem 2.5rem; cursor:pointer; transition:background 0.25s,transform 0.15s; width:100%; margin-top:0.5rem; }
+.btn-sub:hover { background:var(--rust); }
+.btn-sub:active { transform:scale(0.98); }
+.form-ok { display:none; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1.3rem; color:var(--sage-deep); text-align:center; padding:2rem; border:1px solid var(--sage); margin-top:1rem; }
+.form-ok small { display:block; font-family:'Lato',sans-serif; font-size:0.75rem; font-style:normal; font-weight:300; color:var(--text-light); margin-top:0.5rem; }
+
+/* ── MAP ── */
+.map-band {
+  background:var(--stone-mid);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.2'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+  padding:5.5rem 2rem;
+}
+.map-inner { max-width:820px; margin:0 auto; text-align:center; }
+.map-frame { width:100%; height:400px; border:none; display:block; margin-top:2.5rem; border:4px solid var(--warm-white); box-shadow:0 4px 24px rgba(0,0,0,0.12); }
+.map-addr { margin-top:1.4rem; font-family:'Lato',sans-serif; font-weight:200; font-size:0.72rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--text-mid); }
+.map-link { display:inline-block; margin-top:1rem; font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.35em; text-transform:uppercase; color:var(--rust-deep); text-decoration:none; border-bottom:1px solid var(--rust); padding-bottom:2px; transition:color 0.2s; }
+.map-link:hover { color:var(--rust); }
+
+/* ── FOOTER ── */
+footer {
+  background:#1e1710;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='6' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.2'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+  text-align:center;
+  padding:4rem 2rem;
+  position:relative;
+}
+footer::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,transparent,var(--gold) 30%,var(--gold-light) 50%,var(--gold) 70%,transparent); }
+.f-names { font-family:'Cormorant Garamond',serif; font-weight:300; font-style:italic; font-size:clamp(2.5rem,6vw,4rem); color:rgba(255,255,255,0.85); display:block; margin-bottom:1rem; }
+.f-date { font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:0.4em; text-transform:uppercase; color:rgba(255,255,255,0.28); }
+
+/* ── FADE IN ── */
+.fi { opacity:0; transform:translateY(26px); transition:opacity 0.85s ease,transform 0.85s ease; }
+.fi.visible { opacity:1; transform:none; }
+.d1{transition-delay:0.1s} .d2{transition-delay:0.22s} .d3{transition-delay:0.38s}
+
+@media(max-width:600px){
+  .tl-wrap::before{left:18px}
+  .tl-item,.tl-item:nth-child(even){flex-direction:column!important;padding-left:46px}
+  .tl-content,.tl-item:nth-child(odd) .tl-content,.tl-item:nth-child(even) .tl-content{width:100%;margin:0!important;text-align:left!important}
+  .tl-item:nth-child(odd) .tl-content::after,.tl-item:nth-child(even) .tl-content::after{display:none}
+  .tl-dot{left:18px;top:12px}
+  .cd-colon{display:none}
+  .fg-grid{grid-template-columns:1fr}
+  .nav-logo{font-size:0.9rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav class="nav" id="nav">
+  <a class="nav-logo" href="#hero">Mari &amp; Stefano</a>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu">
+    <div class="bars-wrap">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    <span class="heart-icon">♥</span>
+  </button>
+</nav>
+
+<div class="nav-overlay" id="navOverlay">
+  <a class="nav-link" href="#hero" onclick="closeNav()">Home</a>
+  <div class="nav-rule"></div>
+  <a class="nav-link" href="#lettera" onclick="closeNav()">La nostra storia</a>
+  <a class="nav-link" href="#cerimonia" onclick="closeNav()">Cerimonia</a>
+  <a class="nav-link" href="#programma" onclick="closeNav()">Programma</a>
+  <div class="nav-rule"></div>
+  <a class="nav-link" href="#dresscode" onclick="closeNav()">Dress Code</a>
+  <a class="nav-link" href="#gift" onclick="closeNav()">Lista Nozze</a>
+  <a class="nav-link" href="#rsvp" onclick="closeNav()">RSVP</a>
+  <a class="nav-link" href="#allergie" onclick="closeNav()">Allergie</a>
+  <a class="nav-link" href="#location" onclick="closeNav()">Location</a>
+</div>
+
+<!-- ══ HERO ══ -->
+<section class="hero" id="hero">
+  <div class="hero-top"></div>
+  <svg style="position:absolute;inset:0;pointer-events:none;opacity:0.05" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" fill="none">
+    <path d="M220 0L195 130L235 195L200 320" stroke="white" stroke-width="0.6"/>
+    <path d="M960 0L980 90L940 170L968 300" stroke="white" stroke-width="0.5"/>
+    <path d="M0 420L115 408L162 428L295 412" stroke="white" stroke-width="0.35"/>
+    <path d="M1200 580L1072 568L1040 585" stroke="white" stroke-width="0.35"/>
+    <path d="M500 0L488 60L510 80" stroke="white" stroke-width="0.3"/>
+  </svg>
+
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Masseria Paralupi · Lecce · XI Ottobre MMXXVI</div>
+    <svg class="hero-floral" viewBox="0 0 320 100" fill="none">
+      <path d="M160 62C130 42,92 32,52 46" stroke="#c8a460" stroke-width="0.9" fill="none"/>
+      <path d="M160 62C140 32,112 18,82 22" stroke="#7a8c6e" stroke-width="0.7" fill="none"/>
+      <path d="M160 62C148 26,136 9,118 6" stroke="#7a8c6e" stroke-width="0.6" fill="none"/>
+      <ellipse cx="52" cy="43" rx="10" ry="5" transform="rotate(-22 52 43)" fill="#7a8c6e" opacity="0.7"/>
+      <ellipse cx="78" cy="26" rx="9" ry="4.5" transform="rotate(-12 78 26)" fill="#7a8c6e" opacity="0.6"/>
+      <ellipse cx="112" cy="13" rx="8" ry="4" transform="rotate(-5 112 13)" fill="#7a8c6e" opacity="0.5"/>
+      <circle cx="92" cy="36" r="6" fill="#b85c38" opacity="0.65"/>
+      <circle cx="90" cy="36" r="4" fill="#c97c52" opacity="0.5"/>
+      <circle cx="67" cy="53" r="5" fill="#e8c98a" opacity="0.5"/>
+      <circle cx="66" cy="53" r="3" fill="white" opacity="0.15"/>
+      <circle cx="42" cy="54" r="3" fill="#b85c38" opacity="0.4"/>
+      <path d="M160 62C190 42,228 32,268 46" stroke="#c8a460" stroke-width="0.9" fill="none"/>
+      <path d="M160 62C180 32,208 18,238 22" stroke="#7a8c6e" stroke-width="0.7" fill="none"/>
+      <path d="M160 62C172 26,184 9,202 6" stroke="#7a8c6e" stroke-width="0.6" fill="none"/>
+      <ellipse cx="268" cy="43" rx="10" ry="5" transform="rotate(22 268 43)" fill="#7a8c6e" opacity="0.7"/>
+      <ellipse cx="242" cy="26" rx="9" ry="4.5" transform="rotate(12 242 26)" fill="#7a8c6e" opacity="0.6"/>
+      <ellipse cx="208" cy="13" rx="8" ry="4" transform="rotate(5 208 13)" fill="#7a8c6e" opacity="0.5"/>
+      <circle cx="228" cy="36" r="6" fill="#b85c38" opacity="0.65"/>
+      <circle cx="230" cy="36" r="4" fill="#c97c52" opacity="0.5"/>
+      <circle cx="253" cy="53" r="5" fill="#e8c98a" opacity="0.5"/>
+      <circle cx="254" cy="53" r="3" fill="white" opacity="0.15"/>
+      <circle cx="278" cy="54" r="3" fill="#b85c38" opacity="0.4"/>
+      <path d="M160 62L160 92" stroke="#c8a460" stroke-width="0.8" fill="none"/>
+      <circle cx="160" cy="62" r="5" fill="#c8a460" opacity="0.85"/>
+      <circle cx="110" cy="48" r="2.5" fill="#b85c38" opacity="0.45"/>
+      <circle cx="138" cy="32" r="2" fill="#e8c98a" opacity="0.5"/>
+      <circle cx="210" cy="48" r="2.5" fill="#b85c38" opacity="0.45"/>
+      <circle cx="182" cy="32" r="2" fill="#e8c98a" opacity="0.5"/>
+    </svg>
+    <div class="hero-names">Mari<span class="hero-amp">&amp;</span>Stefano</div>
+    <div class="hero-rule"></div>
+    <div class="hero-date-row">
+      <span class="hero-date-piece">Domenica</span>
+      <div class="hero-dot"></div>
+      <span class="hero-date-piece">11 Ottobre 2026</span>
+      <div class="hero-dot"></div>
+      <span class="hero-date-piece">ore 11:00</span>
+    </div>
+    <p class="hero-location">Masseria Paralupi · Lecce</p>
+  </div>
+
+  <div class="scroll-hint">
+    <span>scorri</span>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.2"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+</section>
+
+<!-- ══ LETTERA ══ -->
+<section class="letter-section fi" id="lettera">
+  <div class="letter-inner">
+    <span class="letter-tag">Una premessa doverosa</span>
+    <div class="letter-rule"></div>
+    <p class="letter-body">Abbiamo deciso di sposarci. Sì, volontariamente.
+Dopo mesi passati tra fogli Excel, telefonate infinite, degustazioni "tecniche" e discussioni filosofiche, possiamo confermare una cosa: l'ansia è reale. Esiste. Respira. Dorme con noi.
+Abbiamo scoperto che organizzare un matrimonio è un mix tra una maratona, un esame universitario e una riunione di condominio… ma con l'abito elegante.
+Se leggerete serenità nei nostri sorrisi quel giorno, sappiate che è frutto di un grande lavoro interiore. O di rassegnazione evoluta.
+
+A parte gli scherzi: abbiamo immaginato questa giornata come un momento semplice, autentico e pieno di vita. Il nostro desiderio più grande non è che tutto sia perfetto, ma che tutti si divertano davvero. Che si mangi bene, si rida forte, si balli senza dignità e si torni a casa con il cuore leggero.
+
+<em>Noi mettiamo l'amore. Voi portate l'energia.</em>
+
+E se qualcosa non andrà come previsto… faremo finta che fosse voluto.
+
+L'unica cosa davvero importante è che saremo lì, insieme a voi. Il resto è scenografia. 💛</p>
+    <span class="letter-sig">Mari &amp; Stefano</span>
+  </div>
+</section>
+
+<!-- ══ QUOTE ══ -->
+<div class="quote-section fi">
+  <span class="quote-mark">&ldquo;</span>
+  <p class="quote-text" id="qt">—</p>
+  <span class="quote-author" id="qa">—</span>
+</div>
+
+<!-- ══ COUNTDOWN ══ -->
+<div class="cd-section">
+  <span class="section-tag cd-tag">Mancano ancora</span>
+  <h2 class="cd-title">al giorno più bello</h2>
+  <div class="cd-grid">
+    <div class="cd-item"><span class="cd-num" id="cd-d">—</span><span class="cd-lbl">Giorni</span></div>
+    <span class="cd-colon">:</span>
+    <div class="cd-item"><span class="cd-num" id="cd-h">—</span><span class="cd-lbl">Ore</span></div>
+    <span class="cd-colon">:</span>
+    <div class="cd-item"><span class="cd-num" id="cd-m">—</span><span class="cd-lbl">Minuti</span></div>
+    <span class="cd-colon">:</span>
+    <div class="cd-item"><span class="cd-num" id="cd-s">—</span><span class="cd-lbl">Secondi</span></div>
+  </div>
+</div>
+
+<!-- ══ INFO CARDS ══ -->
+<div class="info-band" id="cerimonia">
+  <div class="sw">
+    <span class="section-tag fi">Il grande giorno</span>
+    <h2 class="section-title fi d1">Dove e quando</h2>
+    <div class="section-rule fi d2"></div>
+    <div class="cards-grid">
+      <div class="info-card fi">
+        <svg class="ic-icon" viewBox="0 0 36 36" fill="none"><rect x="3" y="6" width="30" height="26" rx="2" stroke="#b85c38" stroke-width="1.2"/><line x1="3" y1="13" x2="33" y2="13" stroke="#b85c38" stroke-width="1.2"/><line x1="11" y1="3" x2="11" y2="9" stroke="#b85c38" stroke-width="1.5" stroke-linecap="round"/><line x1="25" y1="3" x2="25" y2="9" stroke="#b85c38" stroke-width="1.5" stroke-linecap="round"/><text x="18" y="27" text-anchor="middle" fill="#b85c38" font-size="10" font-family="Cinzel">11</text></svg>
+        <h3>Data</h3>
+        <p>Domenica<br>11 Ottobre 2026</p>
+      </div>
+      <div class="info-card fi d1">
+        <svg class="ic-icon" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="14" stroke="#b85c38" stroke-width="1.2"/><line x1="18" y1="18" x2="18" y2="8" stroke="#b85c38" stroke-width="1.4" stroke-linecap="round"/><line x1="18" y1="18" x2="24" y2="22" stroke="#b85c38" stroke-width="1.4" stroke-linecap="round"/><circle cx="18" cy="18" r="1.5" fill="#b85c38"/></svg>
+        <h3>Orario</h3>
+        <p>ore 11:00</p>
+        <p class="sub">Cerimonia civile<br>in masseria</p>
+      </div>
+      <div class="info-card fi d2">
+        <svg class="ic-icon" viewBox="0 0 36 36" fill="none"><path d="M18 3C12 3 7 8 7 14C7 22 18 33 18 33C18 33 29 22 29 14C29 8 24 3 18 3Z" stroke="#b85c38" stroke-width="1.2"/><circle cx="18" cy="14" r="4" stroke="#b85c38" stroke-width="1.2"/></svg>
+        <h3>Luogo</h3>
+        <p>Masseria<br>Paralupi</p>
+        <p class="sub">Via Giorgio De Chirico, 8<br>Lecce</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TIMELINE ══ -->
+<div class="tl-section" id="programma">
+  <div class="sw">
+    <span class="section-tag fi">Il programma</span>
+    <h2 class="section-title fi d1">Come si svolgerà la giornata</h2>
+    <div class="section-rule fi d2"></div>
+    <div class="tl-wrap">
+      <div class="tl-item">
+        <div class="tl-content"><span class="tl-emoji">💍</span><span class="tl-time">ore 11:00</span><div class="tl-label">Ingresso degli Sposi</div><div class="tl-desc">Il momento più atteso — Mari e Stefano entrano insieme</div></div>
+        <div class="tl-dot"></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-content"><span class="tl-emoji">📸</span><span class="tl-time">ore 12:30</span><div class="tl-label">Sessione Foto</div><div class="tl-desc">Immortaliamo questo giorno — non scappate troppo presto!</div></div>
+        <div class="tl-dot"></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-content"><span class="tl-emoji">🎵</span><span class="tl-time">ore 13:30</span><div class="tl-label">Primo Ballo</div><div class="tl-desc">Il pavimento è vostro — per adesso</div></div>
+        <div class="tl-dot"></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-content"><span class="tl-emoji">🍽️</span><span class="tl-time">ore 14:00</span><div class="tl-label">Buffet</div><div class="tl-desc">Sapori del Salento, vino buono e tanta allegria</div></div>
+        <div class="tl-dot"></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-content"><span class="tl-emoji">🎉</span><span class="tl-time">ore 17:00</span><div class="tl-label">Caciara</div><div class="tl-desc">La parte ufficialmente non ufficiale — balli, risate e qualche casino</div></div>
+        <div class="tl-dot"></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-content"><span class="tl-emoji">🎂</span><span class="tl-time">ore 20:00</span><div class="tl-label">Taglio della Torta</div><div class="tl-desc">Il gran finale dolce — e poi si ricomincia</div></div>
+        <div class="tl-dot"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DRESSCODE ══ -->
+<div class="dark-band" id="dresscode">
+  <div class="sw" style="padding:5rem 2rem;text-align:center;">
+    <span class="section-tag fi" style="color:rgba(255,255,255,0.4);">Dress Code</span>
+    <h2 class="section-title fi d1" style="color:rgba(255,255,255,0.9);">Come vestirsi?</h2>
+    <div class="section-rule fi d2" style="background:var(--terracotta);"></div>
+    <div class="fi d3">
+      <span class="dresscode-emoji">👗🤵</span>
+      <p class="dresscode-text">Vestitevi come vi pare</p>
+      <p class="dresscode-sub">L'unico requisito è la voglia di festeggiare con noi ✨</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ GIFT ══ -->
+<div class="gift-band" id="gift">
+  <div class="sw">
+    <span class="section-tag fi">Lista Nozze</span>
+    <h2 class="section-title fi d1">Un pensiero per noi</h2>
+    <div class="section-rule fi d2"></div>
+    <div class="gift-card fi d3">
+      <p class="gift-text">Abbiamo una cosa da dirvi,
+Abbiamo già una casa, i bicchieri, tre modi diversi di preparare il caffè ed altrettante tazzine.
+I nostri viaggi non hanno programmi, ma solo un bagaglio pieno di chissà ed una strada che forse ieri non c'era.
+
+Se desiderate quindi farci un pensiero, abbiamo scelto un piccolo fondo sogni ✨ per realizzare le nostre idee future e ogni vostro contributo sarà un pezzetto di questo nuovo capitolo.
+
+Qui sotto trovate l'IBAN dedicato. Grazie di cuore per accompagnarci anche in questa nuova avventura! ❤️</p>
+      <div class="gift-iban">
+        <p><strong>IBAN:</strong> *******</p>
+        <p><strong>Intestato a:</strong> *****</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RSVP ══ -->
+<div class="rsvp-section" id="rsvp">
+  <div class="rsvp-inner">
+    <span class="section-tag fi" style="color:var(--gold-light);opacity:0.7;">Conferma presenza</span>
+    <h2 class="section-title fi d1" style="color:rgba(255,255,255,0.9);margin-bottom:0.6rem;">Ci sarai?</h2>
+    <div class="section-rule fi d2" style="background:var(--gold);"></div>
+    <p class="rsvp-desc fi d3">
+      Facci sapere se festeggerai con noi!<br>
+      Ti basta un messaggio WhatsApp — ci fa enormemente piacere sapere chi arriva 🥂
+    </p>
+    <a
+      id="rsvp-wa"
+      class="rsvp-btn fi"
+      href="#"
+      target="_blank"
+      rel="noopener"
+    >
+      <!-- WhatsApp icon -->
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+        <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.553 4.116 1.522 5.847L.057 23.882a.5.5 0 0 0 .612.612l6.09-1.46A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.9a9.893 9.893 0 0 1-5.031-1.372l-.36-.214-3.733.895.912-3.63-.235-.374A9.865 9.865 0 0 1 2.1 12C2.1 6.533 6.533 2.1 12 2.1c5.468 0 9.9 4.432 9.9 9.9 0 5.467-4.432 9.9-9.9 9.9z"/>
+      </svg>
+      Conferma su WhatsApp
+    </a>
+    <p class="rsvp-note fi">Ti apriremo direttamente la chat ♥</p>
+  </div>
+</div>
+
+<!-- ══ ALLERGIE ══ -->
+<div class="allergy-section" id="allergie">
+  <div class="sw">
+    <span class="section-tag fi">Prima di venire</span>
+    <h2 class="section-title fi d1">Allergie &amp; Intolleranze</h2>
+    <div class="section-rule fi d2"></div>
+    <div class="allergy-box fi d3">
+      <span class="allergy-icon">🌿</span>
+      <p class="allergy-desc">Vogliamo che tutti mangino e stiano bene!<br>Se hai allergie, intolleranze o preferenze alimentari,<br>comunicacelo qui — lo passeremo direttamente al nostro chef.</p>
+      <div class="allergy-form" id="aform">
+        <div class="fg-grid">
+          <div class="fg"><label>Il tuo nome</label><input type="text" placeholder="es. Marco Rossi" id="fn"></div>
+          <div class="fg"><label>N° ospiti</label><input type="number" min="1" max="20" placeholder="1" id="fg2"></div>
+        </div>
+        <div class="fg">
+          <label>Allergie / Intolleranze</label>
+          <select id="ft">
+            <option value="">Seleziona o aggiungi nelle note ↓</option>
+            <option>Glutine / Celiachia</option>
+            <option>Lattosio</option>
+            <option>Frutta a guscio</option>
+            <option>Crostacei / Molluschi</option>
+            <option>Pesce</option>
+            <option>Uova</option>
+            <option>Soia</option>
+            <option>Vegetariano</option>
+            <option>Vegano</option>
+            <option>Altro (specifica nelle note)</option>
+          </select>
+        </div>
+        <div class="fg"><label>Note aggiuntive</label><textarea rows="3" placeholder="Descrivi eventuali allergie specifiche o necessità particolari..." id="fnotes"></textarea></div>
+        <button class="btn-sub" onclick="sendAllergy()">Invia segnalazione →</button>
+      </div>
+      <div class="form-ok" id="fok">
+        Grazie! Abbiamo ricevuto la tua segnalazione 🌿
+        <small>Ci penseremo noi a comunicarlo allo chef.</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MAP ══ -->
+<div class="map-band" id="location">
+  <div class="map-inner">
+    <span class="section-tag fi" style="color:var(--rust-deep);">Come raggiungerci</span>
+    <h2 class="section-title fi d1">Masseria Paralupi</h2>
+    <div class="section-rule fi d2"></div>
+
+    <!-- Google Maps embed centrato su Via Giorgio De Chirico 8, Lecce -->
+    <iframe
+      class="map-frame fi d3"
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3032.4817563!2d18.16254!3d40.35280!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x13481e4b5f9c7e39%3A0x8b2c3d4e5f6a7b8c!2sVia+Giorgio+De+Chirico%2C+8%2C+73100+Lecce+LE!5e0!3m2!1sit!2sit!4v1714139200000!5m2!1sit!2sit"
+      allowfullscreen=""
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+      title="Via Giorgio De Chirico 8, Lecce">
+    </iframe>
+
+    <p class="map-addr">Via Giorgio De Chirico, 8 · 73100 Lecce (LE)</p>
+    <a class="map-link" href="https://maps.google.com/?q=Via+Giorgio+De+Chirico+8+Lecce+73100" target="_blank" rel="noopener">Apri in Google Maps →</a>
+  </div>
+</div>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <span class="f-names">Mari &amp; Stefano</span>
+  <p class="f-date">XI · Ottobre · MMXXVI · Lecce</p>
+</footer>
+
+<script>
+/* NAV */
+const toggle = document.getElementById('navToggle');
+const overlay = document.getElementById('navOverlay');
+const navEl = document.getElementById('nav');
+
+toggle.addEventListener('click', () => {
+  const isOpen = overlay.classList.toggle('open');
+  toggle.classList.toggle('open', isOpen);
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+});
+
+function closeNav() {
+  overlay.classList.remove('open');
+  toggle.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+window.addEventListener('scroll', () => {
+  navEl.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+/* Close on ESC */
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeNav(); });
+
+/* QUOTES */
+const quotes = [
+  {t:"Amare non è guardarsi l'uno l'altro, ma guardare insieme nella stessa direzione.",a:"Antoine de Saint-Exupéry"},
+  {t:"Il vero amore non è altro che un nome per un desiderio che dura quanto il mondo.",a:"Guy de Maupassant"},
+  {t:"Dove sei tu, lì è casa mia.",a:"Emily Dickinson"},
+  {t:"Ogni storia d'amore è bella, ma la nostra è la mia preferita.",a:"Anonimo"},
+  {t:"Due anime con un solo pensiero, due cuori che battono all'unisono.",a:"Friedrich Halm"},
+  {t:"Amare è trovare nella felicità dell'altro la propria felicità.",a:"G.W. Leibniz"},
+  {t:"Non è la mancanza d'amore, ma la mancanza d'amicizia che rende infelici i matrimoni.",a:"Friedrich Nietzsche"},
+  {t:"La vita è il fiore di cui l'amore è il miele.",a:"Victor Hugo"},
+  {t:"Ama e fa' ciò che vuoi.",a:"Sant'Agostino"},
+  {t:"L'amore non guarda con gli occhi, ma con la mente.",a:"William Shakespeare"},
+  {t:"Ogni volta che ti guardo, mi innamoro di te come fosse la prima volta.",a:"Anonimo"},
+  {t:"Non ti ho scelto perché fossi perfetto. Ti ho scelto perché con te anche i miei difetti si sentono a casa.",a:"Anonimo"},
+  {t:"Amare è la cosa più seria del mondo.",a:"Gustave Flaubert"},
+  {t:"Il matrimonio è un lungo pasto durante il quale il dessert viene servito prima.",a:"Jean Guitton"},
+  {t:"L'amore è composto da un'unica anima che abita due corpi.",a:"Aristotele"}
+];
+const q = quotes[Math.floor(Math.random() * quotes.length)];
+document.getElementById('qt').textContent = q.t;
+document.getElementById('qa').textContent = '— ' + q.a;
+
+/* COUNTDOWN */
+function tick() {
+  const diff = new Date('2026-10-11T11:00:00') - new Date();
+  if (diff <= 0) { ['cd-d','cd-h','cd-m','cd-s'].forEach(id => document.getElementById(id).textContent='00'); return; }
+  document.getElementById('cd-d').textContent = String(Math.floor(diff/86400000)).padStart(2,'0');
+  document.getElementById('cd-h').textContent = String(Math.floor((diff%86400000)/3600000)).padStart(2,'0');
+  document.getElementById('cd-m').textContent = String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
+  document.getElementById('cd-s').textContent = String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+}
+tick(); setInterval(tick, 1000);
+
+/* SCROLL ANIMATIONS */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
+}, {threshold: 0.10});
+document.querySelectorAll('.fi, .tl-item').forEach(el => io.observe(el));
+
+/* RSVP WhatsApp link */
+(function(){
+  const phone = '393331234567'; // ← SOSTITUIRE con il numero reale (prefisso internazionale, no +)
+  const msg = encodeURIComponent('Ciao Mari e Stefano! 🎉 Confermo la mia presenza al vostro matrimonio dell\'11 Ottobre 2026. Non vedo l\'ora! ❤️');
+  document.getElementById('rsvp-wa').href = 'https://wa.me/' + phone + '?text=' + msg;
+})();
+function sendAllergy() {
+  if (!document.getElementById('fn').value.trim()) { alert('Inserisci il tuo nome 😊'); return; }
+  document.getElementById('aform').style.display = 'none';
+  document.getElementById('fok').style.display = 'block';
+}
+</script>
+</body>
+</html>
