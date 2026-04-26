@@ -82,6 +82,15 @@ body { font-family:'Lato',sans-serif; background-color:var(--parchment); color:v
 .hero::after { content:''; position:absolute; inset:0; background: radial-gradient(ellipse 80% 50% at 50% 0%,rgba(200,164,96,0.12) 0%,transparent 60%), radial-gradient(ellipse 60% 40% at 15% 100%,rgba(122,140,110,0.10) 0%,transparent 60%), radial-gradient(ellipse 60% 40% at 85% 100%,rgba(200,164,96,0.08) 0%,transparent 60%); pointer-events:none; }
 .hero-top { position:absolute; top:0; left:0; right:0; height:5px; background:linear-gradient(90deg,transparent,var(--rust) 25%,var(--gold) 50%,var(--rust) 75%,transparent); }
 .hero-inner { position:relative; z-index:3; display:flex; flex-direction:column; align-items:center; }
+.hero-eyebrow { 
+  font-family:'Cinzel',serif; 
+  font-size:clamp(0.5rem,1.2vw,0.68rem); 
+  letter-spacing:0.5em; 
+  color:var(--gold-light); 
+  text-transform:uppercase; 
+  margin-bottom:2.5rem; 
+  opacity:0.8; 
+}
 .hero-floral { width:clamp(200px,38vw,270px); margin-bottom:1.5rem; opacity:0.72; }
 .hero-names { font-family:'Cormorant Garamond',serif; font-weight:300; font-style:italic; font-size:clamp(5rem,16vw,11rem); line-height:0.85; color:var(--warm-white); }
 .hero-amp { display:block; font-size:clamp(3.5rem,10vw,7rem); color:var(--gold); line-height:1.2; font-style:normal; }
@@ -284,6 +293,7 @@ footer::before { content:''; position:absolute; top:0; left:0; right:0; height:3
     <path d="M1200 580L1072 568L1040 585" stroke="white" stroke-width="0.35"/>
   </svg>
   <div class="hero-inner">
+    <div class="hero-eyebrow">Masseria Paralupi · Lecce · 11 Ottobre 2026</div>
     <svg class="hero-floral" viewBox="0 0 320 100" fill="none">
       <path d="M160 62C130 42,92 32,52 46" stroke="#c8a460" stroke-width="0.9" fill="none"/>
       <path d="M160 62C140 32,112 18,82 22" stroke="#7a8c6e" stroke-width="0.7" fill="none"/>
