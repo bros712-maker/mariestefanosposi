@@ -270,6 +270,21 @@ body { font-family:'Lato',sans-serif; background-color:var(--parchment); color:v
 .map-link { display:inline-block; margin-top:1rem; font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.35em; text-transform:uppercase; color:var(--rust-deep); text-decoration:none; border-bottom:1px solid var(--rust); padding-bottom:2px; transition:color 0.2s; }
 .map-link:hover { color:var(--rust); }
 
+/* ── SORPRESA / MINIGIOCO ── */
+.surprise-section { background:var(--parchment); padding:6rem 2rem; }
+.surprise-text { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:clamp(1.1rem,2.4vw,1.35rem); font-weight:300; color:var(--text-mid); margin-bottom:2.2rem; }
+.surprise-btn {
+  font-family:'Cinzel',serif; font-size:0.68rem; font-weight:400; letter-spacing:0.3em; text-transform:uppercase;
+  color:var(--warm-white); background:var(--rust); border:none; padding:1rem 2.4rem;
+  cursor:pointer; transition:background 0.25s, transform 0.15s, box-shadow 0.25s;
+  box-shadow:0 4px 18px rgba(184,92,56,0.28);
+}
+.surprise-btn:hover { background:var(--rust-deep); transform:translateY(-2px); }
+.surprise-btn:active { transform:scale(0.97); }
+.surprise-game { display:none; margin-top:3rem; }
+.surprise-game.open { display:block; animation: surprise-in 0.7s ease; }
+@keyframes surprise-in { from{ opacity:0; transform:translateY(24px); } to{ opacity:1; transform:translateY(0); } }
+
 /* ── FOOTER ── */
 footer {
   background:#461413;
@@ -571,6 +586,20 @@ Qui sotto trovate l'IBAN dedicato. Grazie di cuore per accompagnarci anche in qu
   </div>
 </div>
 
+<!-- SORPRESA / MINIGIOCO -->
+<div class="surprise-section">
+  <div class="sw" style="text-align:center;">
+    <span class="section-tag fi">Prima di lasciarci</span>
+    <h2 class="section-title fi d1">Una piccola sorpresa</h2>
+    <div class="section-rule fi d2"></div>
+    <p class="surprise-text fi d3">Hai un minuto? Ti abbiamo preparato un piccolo gioco per arrivare fino a noi 💛</p>
+    <button class="surprise-btn fi d3" id="surprise-btn" type="button">Scopri</button>
+    <div class="surprise-game" id="surprise-game">
+      <div id="corri-mari"></div>
+    </div>
+  </div>
+</div>
+
 <!-- FOOTER -->
 <footer>
   <span class="f-names">Mari &amp; Stefano</span>
@@ -667,6 +696,25 @@ document.querySelectorAll('.fi').forEach(el=>io.observe(el));
   const phoneStef  = '393891842810'; /* ← SOSTITUIRE con numero di Stefano */
   document.getElementById('rsvp-mari').href = 'https://api.whatsapp.com/send?phone=' + phoneMari + '&text=' + msg;
   document.getElementById('rsvp-stef').href = 'https://api.whatsapp.com/send?phone=' + phoneStef + '&text=' + msg;
+})();
+
+/* SORPRESA — minigioco caricato solo al click */
+(function(){
+  const btn = document.getElementById('surprise-btn');
+  const box = document.getElementById('surprise-game');
+  let loaded = false;
+  btn.addEventListener('click', () => {
+    const open = box.classList.toggle('open');
+    btn.textContent = open ? 'Nascondi il gioco' : 'Scopri';
+    if (open && !loaded) {
+      loaded = true;
+      const s = document.createElement('script');
+      s.src = 'minigame/corri-mari.js';
+      s.onload = () => window.CorriMari.mount('#corri-mari');
+      document.body.appendChild(s);
+    }
+    if (open) box.scrollIntoView({ behavior:'smooth', block:'start' });
+  });
 })();
 </script>
 </body>

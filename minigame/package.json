@@ -1,0 +1,7 @@
+{
+  "name": "corri-mari",
+  "private": true,
+  "dependencies": {
+    "@upstash/redis": "^1.38.0"
+  }
+}
