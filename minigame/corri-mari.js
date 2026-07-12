@@ -49,38 +49,40 @@
 
   const CSS = `
   .cm-box{font-family:'Trebuchet MS',sans-serif;display:flex;flex-direction:column;
-    align-items:center;gap:10px;max-width:820px;margin:0 auto;color:#fff}
-  .cm-title{font-size:20px;letter-spacing:2px;color:#e8c98a;text-shadow:2px 2px 0 #8c3d22;margin:0}
+    align-items:center;gap:clamp(6px,1.8vw,10px);max-width:820px;margin:0 auto;color:#fff}
+  .cm-title{font-size:clamp(14px,4.2vw,20px);letter-spacing:2px;color:#e8c98a;text-shadow:2px 2px 0 #8c3d22;margin:0}
   .cm-wrap{position:relative;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.35);
     border:4px solid #e8c98a;border-radius:6px;overflow:hidden;background:#a9c2b6}
   .cm-cv{display:block;width:100%;height:auto}
-  .cm-hud{position:absolute;top:8px;left:10px;font-size:13px;font-weight:bold;
+  .cm-hud{position:absolute;top:8px;left:10px;font-size:clamp(9px,2.6vw,13px);font-weight:bold;
     text-shadow:2px 2px 0 #000;pointer-events:none;color:#fff}
   .cm-msg{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
-    justify-content:center;background:rgba(70,20,19,.88);text-align:center;gap:12px;padding:20px}
-  .cm-msg h2{font-size:26px;color:#e8c98a;text-shadow:2px 2px 0 #8c3d22;margin:0}
-  .cm-msg p{font-size:14px;max-width:420px;line-height:1.5;opacity:.9;margin:0}
-  .cm-msg button,.cm-go{background:#b85c38;border:none;color:#fff;padding:10px 24px;font-size:15px;
+    justify-content:center;background:rgba(70,20,19,.88);text-align:center;
+    gap:clamp(4px,1.6vw,12px);padding:clamp(8px,3vw,20px);overflow:hidden}
+  .cm-msg h2{font-size:clamp(14px,4.6vw,26px);color:#e8c98a;text-shadow:2px 2px 0 #8c3d22;margin:0}
+  .cm-msg p{font-size:clamp(9px,2.8vw,14px);max-width:420px;line-height:1.35;opacity:.9;margin:0}
+  .cm-msg button,.cm-go{background:#b85c38;border:none;color:#fff;
+    padding:clamp(5px,1.8vw,10px) clamp(12px,4vw,24px);font-size:clamp(10px,2.8vw,15px);
     font-weight:bold;border-radius:20px;cursor:pointer;box-shadow:0 4px 0 #8c3d22}
   .cm-msg button:active{transform:translateY(3px);box-shadow:0 1px 0 #8c3d22}
   .cm-hide{display:none!important}
-  .cm-nome{padding:9px 12px;font-size:15px;border-radius:16px;border:2px solid #e8c98a;
+  .cm-nome{padding:clamp(5px,1.8vw,9px) 12px;font-size:clamp(11px,3vw,15px);border-radius:16px;border:2px solid #e8c98a;
     background:#f9f4ed;color:#2c2419;text-align:center;width:220px;max-width:80%;outline:none}
   .cm-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center}
   .cm-alt{background:#4e5f44;border:2px solid #e8c98a;box-shadow:none}
-  .cm-stato{min-height:16px;font-size:12px;opacity:.85}
-  .cm-tab{border-collapse:collapse;font-size:13px;background:rgba(255,255,255,.06);
+  .cm-stato{min-height:16px;font-size:clamp(9px,2.4vw,12px);opacity:.85}
+  .cm-tab{border-collapse:collapse;font-size:clamp(10px,2.6vw,13px);background:rgba(255,255,255,.06);
     border-radius:8px;overflow:hidden}
-  .cm-tab th,.cm-tab td{padding:5px 12px;text-align:center}
-  .cm-tab th{background:#b85c38;font-size:12px}
+  .cm-tab th,.cm-tab td{padding:clamp(3px,1.2vw,5px) clamp(6px,2.4vw,12px);text-align:center}
+  .cm-tab th{background:#b85c38;font-size:clamp(9px,2.4vw,12px)}
   .cm-tab tr:nth-child(even) td{background:rgba(255,255,255,.05)}
   .cm-me td{background:#e8c98a!important;color:#8c3d22;font-weight:bold}
   .cm-ctrl{display:flex;gap:10px}
-  .cm-pad{width:64px;height:56px;background:#4e5f44;border:2px solid #e8c98a;border-radius:10px;
-    display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;
+  .cm-pad{width:clamp(46px,13vw,64px);height:clamp(40px,11vw,56px);background:#4e5f44;border:2px solid #e8c98a;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;font-size:clamp(16px,4.6vw,22px);color:#fff;
     user-select:none;-webkit-user-select:none;touch-action:none;cursor:pointer}
   .cm-pad:active{background:#b85c38}
-  .cm-J{width:110px;font-size:14px;font-weight:bold}
+  .cm-J{width:clamp(78px,22vw,110px);font-size:clamp(10px,2.8vw,14px);font-weight:bold}
   `;
 
   const HTML = `
