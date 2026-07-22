@@ -270,20 +270,42 @@ body { font-family:'Lato',sans-serif; background-color:var(--parchment); color:v
 .map-link { display:inline-block; margin-top:1rem; font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.35em; text-transform:uppercase; color:var(--rust-deep); text-decoration:none; border-bottom:1px solid var(--rust); padding-bottom:2px; transition:color 0.2s; }
 .map-link:hover { color:var(--rust); }
 
-/* ── SORPRESA / MINIGIOCO ── */
-.surprise-section { background:var(--parchment); }
-.surprise-text { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:clamp(1.1rem,2.4vw,1.35rem); font-weight:300; color:var(--text-mid); margin-bottom:2.2rem; }
-.surprise-btn {
-  font-family:'Cinzel',serif; font-size:0.68rem; font-weight:400; letter-spacing:0.3em; text-transform:uppercase;
-  color:var(--warm-white); background:var(--rust); border:none; padding:1rem 2.4rem;
-  cursor:pointer; transition:background 0.25s, transform 0.15s, box-shadow 0.25s;
-  box-shadow:0 4px 18px rgba(184,92,56,0.28);
+/* ── GIOCHI ── */
+.games-section { background:var(--parchment); position:relative; }
+.games-section::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg,transparent,var(--rust) 30%,var(--gold) 50%,var(--rust) 70%,transparent); }
+.games-intro { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:clamp(1.05rem,2.3vw,1.3rem); font-weight:300; color:var(--text-mid); max-width:540px; margin:0 auto 3.2rem; line-height:1.75; }
+
+.games-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:1.6rem; max-width:640px; margin:0 auto; }
+.game-card {
+  position:relative; display:flex; flex-direction:column; align-items:center;
+  background:var(--warm-white); border:1px solid rgba(180,155,130,0.3); border-top:3px solid var(--rust);
+  padding:2.4rem 1.6rem 2rem; font-family:inherit; text-align:center; cursor:pointer; overflow:hidden;
+  transition:transform 0.25s ease, box-shadow 0.25s ease, border-top-color 0.25s ease;
 }
-.surprise-btn:hover { background:var(--rust-deep); transform:translateY(-2px); }
-.surprise-btn:active { transform:scale(0.97); }
-.surprise-game { display:none; margin-top:3rem; }
-.surprise-game.open { display:block; animation: surprise-in 0.7s ease; }
+.game-card::after { content:''; position:absolute; bottom:0; right:0; width:36px; height:36px; background:var(--stone-bg); clip-path:polygon(100% 0,100% 100%,0 100%); opacity:0.4; }
+.game-card:hover, .game-card:focus-visible { transform:translateY(-6px); box-shadow:0 14px 34px rgba(70,20,19,0.14); border-top-color:var(--gold); outline:none; }
+.game-card:active { transform:translateY(-2px) scale(0.99); }
+.game-card.active { box-shadow:0 10px 30px rgba(200,164,96,0.3); }
+.game-card-flag { position:absolute; top:0.8rem; right:0.9rem; font-family:'Cinzel',serif; font-size:0.48rem; letter-spacing:0.2em; color:var(--gold); opacity:0; transition:opacity 0.2s; }
+.game-card.active .game-card-flag { opacity:1; }
+.game-card-icon { width:42px; height:42px; margin-bottom:1.1rem; }
+.game-card-icon svg { width:100%; height:100%; display:block; }
+.game-card-name { font-family:'Cinzel',serif; font-size:0.78rem; font-weight:500; letter-spacing:0.16em; text-transform:uppercase; color:var(--text); margin-bottom:0.7rem; }
+.game-card-desc { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1.05rem; color:var(--text-mid); line-height:1.5; margin-bottom:1.6rem; min-height:2.6em; }
+.game-card-cta { display:inline-flex; align-items:center; gap:0.45rem; font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.26em; text-transform:uppercase; color:var(--warm-white); background:var(--rust); padding:0.65rem 1.3rem; transition:background 0.25s; }
+.game-card:hover .game-card-cta, .game-card.active .game-card-cta { background:var(--rust-deep); }
+.game-card-cta svg { width:11px; height:11px; transition:transform 0.25s; }
+.game-card:hover .game-card-cta svg { transform:translateX(3px); }
+
+.game-panel { display:none; margin-top:3.5rem; text-align:left; background:var(--warm-white); border:1px solid rgba(180,155,130,0.3); position:relative; box-shadow:0 18px 46px rgba(70,20,19,0.1); }
+.game-panel::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,transparent,var(--rust) 25%,var(--gold) 50%,var(--rust) 75%,transparent); }
+.game-panel.open { display:block; animation: surprise-in 0.7s ease; }
 @keyframes surprise-in { from{ opacity:0; transform:translateY(24px); } to{ opacity:1; transform:translateY(0); } }
+.game-panel-head { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:1.1rem 1.4rem; border-bottom:1px solid rgba(180,155,130,0.25); }
+.game-panel-title { font-family:'Cinzel',serif; font-size:0.68rem; letter-spacing:0.26em; text-transform:uppercase; color:var(--rust-deep); }
+.game-panel-close { flex-shrink:0; width:30px; height:30px; border:none; border-radius:50%; background:var(--stone-bg); color:var(--text-mid); cursor:pointer; font-size:0.85rem; line-height:1; display:flex; align-items:center; justify-content:center; transition:background 0.2s,color 0.2s,transform 0.2s; }
+.game-panel-close:hover { background:var(--rust); color:var(--warm-white); transform:rotate(90deg); }
+.game-panel-body { padding:1.6rem; display:flex; justify-content:center; }
 
 /* ── FOOTER ── */
 footer {
@@ -309,6 +331,7 @@ footer::before { content:''; position:absolute; top:0; left:0; right:0; height:3
   .cd-colon{display:none}
   .nav-logo{font-size:0.9rem}
   .rsvp-btn { min-width:160px; font-size:0.6rem; padding:1rem 1.4rem; }
+  .game-panel-body { padding:1rem; }
 }
 </style>
 </head>
@@ -341,6 +364,8 @@ footer::before { content:''; position:absolute; top:0; left:0; right:0; height:3
   <a class="nav-link" href="#rsvp" onclick="closeNav()">RSVP</a>
   <a class="nav-link" href="#allergie" onclick="closeNav()">Allergie</a>
   <a class="nav-link" href="#location" onclick="closeNav()">Location</a>
+  <div class="nav-rule"></div>
+  <a class="nav-link" href="#giochi" onclick="closeNav()">Giochi</a>
 </div>
 
 <!-- HERO -->
@@ -586,16 +611,70 @@ Qui sotto trovate l'IBAN dedicato. Grazie di cuore per accompagnarci anche in qu
   </div>
 </div>
 
-<!-- SORPRESA / MINIGIOCO -->
-<div class="surprise-section">
+<!-- GIOCHI -->
+<div class="games-section" id="giochi">
   <div class="sw" style="text-align:center;">
-    <span class="section-tag fi">Prima di lasciarci</span>
-    <h2 class="section-title fi d1">Una piccola sorpresa</h2>
+    <span class="section-tag fi">E adesso due giochini!!!</span>
+    <h2 class="section-title fi d1">Pronti alla sfida?</h2>
     <div class="section-rule fi d2"></div>
-    <p class="surprise-text fi d3">Hai un minuto? Ti abbiamo preparato un piccolo gioco per arrivare fino a noi 💛</p>
-    <button class="surprise-btn fi d3" id="surprise-btn" type="button">Scopri</button>
-    <div class="surprise-game" id="surprise-game">
-      <div id="corri-mari"></div>
+    <p class="games-intro fi d3">Lo sappiamo, ormai non è più una sorpresa — ma il divertimento resta lo stesso. Scegli il tuo gioco e prova a scalare la classifica 💛</p>
+
+    <div class="games-grid fi d3">
+      <button class="game-card" id="game-btn-corsa" type="button" aria-pressed="false">
+        <span class="game-card-flag" aria-hidden="true">In corso</span>
+        <span class="game-card-icon">
+          <svg viewBox="0 0 36 36" fill="none">
+            <circle cx="22" cy="7" r="3" stroke="#b85c38" stroke-width="1.3"/>
+            <path d="M20 11L14 15L18 19L15 27" stroke="#b85c38" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <path d="M18 19L25 22L28 16" stroke="#b85c38" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <path d="M14 15L9 13" stroke="#b85c38" stroke-width="1.2" stroke-linecap="round"/>
+            <path d="M15 27L10 32" stroke="#b85c38" stroke-width="1.3" stroke-linecap="round"/>
+            <path d="M15 27L21 31" stroke="#b85c38" stroke-width="1.3" stroke-linecap="round"/>
+            <path d="M3 28L9 28" stroke="#c8a460" stroke-width="0.9" opacity="0.55" stroke-linecap="round"/>
+            <path d="M1 23L7 23" stroke="#c8a460" stroke-width="0.8" opacity="0.4" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="game-card-name">Corri Mari!</span>
+        <span class="game-card-desc">Salta gli ostacoli e corri tra le braccia di Stefano</span>
+        <span class="game-card-cta">Gioca
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+        </span>
+      </button>
+
+      <button class="game-card" id="game-btn-fiori" type="button" aria-pressed="false">
+        <span class="game-card-flag" aria-hidden="true">In corso</span>
+        <span class="game-card-icon">
+          <svg viewBox="0 0 36 36" fill="none">
+            <path d="M18 33V19" stroke="#7a8c6e" stroke-width="1.2" stroke-linecap="round"/>
+            <path d="M18 23C14 23 11.5 20.5 11.5 20.5" stroke="#7a8c6e" stroke-width="0.9" stroke-linecap="round" fill="none"/>
+            <path d="M18 27C22 27 24.5 24.5 24.5 24.5" stroke="#7a8c6e" stroke-width="0.9" stroke-linecap="round" fill="none"/>
+            <g>
+              <ellipse cx="18" cy="9" rx="4" ry="6.2" fill="#c97c52" opacity="0.55"/>
+              <ellipse cx="18" cy="9" rx="4" ry="6.2" fill="#c97c52" opacity="0.55" transform="rotate(72 18 9)"/>
+              <ellipse cx="18" cy="9" rx="4" ry="6.2" fill="#c97c52" opacity="0.55" transform="rotate(144 18 9)"/>
+              <ellipse cx="18" cy="9" rx="4" ry="6.2" fill="#c97c52" opacity="0.55" transform="rotate(216 18 9)"/>
+              <ellipse cx="18" cy="9" rx="4" ry="6.2" fill="#c97c52" opacity="0.55" transform="rotate(288 18 9)"/>
+              <circle cx="18" cy="9" r="3" fill="#e8c98a"/>
+            </g>
+          </svg>
+        </span>
+        <span class="game-card-name">Prendi i Fiori!</span>
+        <span class="game-card-desc">Raccogli i fiori che Stefano lancia dall'alto, uno dopo l'altro</span>
+        <span class="game-card-cta">Gioca
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+        </span>
+      </button>
+    </div>
+
+    <div class="game-panel" id="game-panel">
+      <div class="game-panel-head">
+        <span class="game-panel-title" id="game-panel-title">—</span>
+        <button class="game-panel-close" id="game-panel-close" type="button" aria-label="Chiudi gioco">✕</button>
+      </div>
+      <div class="game-panel-body">
+        <div id="corri-mari"></div>
+        <div id="lancio-fiori" style="display:none;"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -698,23 +777,74 @@ document.querySelectorAll('.fi').forEach(el=>io.observe(el));
   document.getElementById('rsvp-stef').href = 'https://api.whatsapp.com/send?phone=' + phoneStef + '&text=' + msg;
 })();
 
-/* SORPRESA — minigioco caricato solo al click */
+/* GIOCHI — due minigiochi, caricati on-demand, un pannello condiviso */
 (function(){
-  const btn = document.getElementById('surprise-btn');
-  const box = document.getElementById('surprise-game');
-  let loaded = false;
-  btn.addEventListener('click', () => {
-    const open = box.classList.toggle('open');
-    btn.textContent = open ? 'Nascondi il gioco' : 'Scopri';
-    if (open && !loaded) {
-      loaded = true;
-      const s = document.createElement('script');
-      s.src = 'minigame/corri-mari.js';
-      s.onload = () => window.CorriMari.mount('#corri-mari');
-      document.body.appendChild(s);
+  const games = {
+    corsa: {
+      btn: document.getElementById('game-btn-corsa'),
+      mount: '#corri-mari',
+      src: 'minigame/corri-mari.js',
+      global: 'CorriMari',
+      title: 'Corri Mari!'
+    },
+    fiori: {
+      btn: document.getElementById('game-btn-fiori'),
+      mount: '#lancio-fiori',
+      src: 'minigame/fiori/lancio-fiori.js',
+      global: 'LancioFiori',
+      title: 'Prendi i Fiori!'
     }
-    if (open) box.scrollIntoView({ behavior:'smooth', block:'start' });
-  });
+  };
+  const panel = document.getElementById('game-panel');
+  const panelTitle = document.getElementById('game-panel-title');
+  const closeBtn = document.getElementById('game-panel-close');
+  let current = null;
+
+  function loadScript(src){
+    return new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = src;
+      s.onload = resolve;
+      s.onerror = reject;
+      document.body.appendChild(s);
+    });
+  }
+
+  function setActive(key){
+    Object.entries(games).forEach(([k, g]) => {
+      g.btn.classList.toggle('active', k === key);
+      g.btn.setAttribute('aria-pressed', k === key ? 'true' : 'false');
+    });
+  }
+
+  async function openGame(key){
+    const g = games[key];
+    if (!g) return;
+    Object.entries(games).forEach(([k, o]) => {
+      const el = document.querySelector(o.mount);
+      if (el) el.style.display = (k === key) ? '' : 'none';
+    });
+    panelTitle.textContent = g.title;
+    panel.classList.add('open');
+    setActive(key);
+    if (!g.loaded) {
+      g.loaded = true;
+      if (!window[g.global]) await loadScript(g.src);
+      window[g.global].mount(g.mount);
+    }
+    current = key;
+    panel.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  function closePanel(){
+    panel.classList.remove('open');
+    setActive(null);
+    current = null;
+  }
+
+  games.corsa.btn.addEventListener('click', () => current === 'corsa' ? closePanel() : openGame('corsa'));
+  games.fiori.btn.addEventListener('click', () => current === 'fiori' ? closePanel() : openGame('fiori'));
+  closeBtn.addEventListener('click', closePanel);
 })();
 </script>
 </body>

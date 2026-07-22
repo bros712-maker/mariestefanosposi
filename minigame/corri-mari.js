@@ -13,16 +13,40 @@
   const FW = 120, FH = 200;    // frame sposa (4: idle, corsa1, corsa2, salto)
   const GFW = 120, GFH = 200;  // frame sposo (2: fermo, braccia aperte)
 
+  // ---- schermo intero mobile -------------------------------------------
+  // Su touch il gioco e' pensato per essere giocato a schermo intero in
+  // orizzontale: il canvas ha una forma 2:1 pensata per il paesaggio, su un
+  // telefono in verticale risulterebbe schiacciato e piccolissimo.
+  const isTouch = matchMedia('(pointer:coarse)').matches;
+
   // ---- classifica -----------------------------------------------------
   // Endpoint dell'API su Vercel. Cambia qui se lo monti su un path diverso.
   const API = (window.CORRI_MARI_API || '/api/score');
   const TIMER_START = 100;
 
+  // --- anti-cheat: prova di gioco ---
+  // Il segreto e' condiviso con l'API. NB: vive nel browser, quindi non e' una
+  // protezione perfetta (chi legge il codice puo' estrarlo), ma alza molto
+  // l'asticella: non basta piu' una riga in console per falsificare un punteggio.
+  const CM_SECRET = 'ste-mari-2026-cambami';
+  let cmFrames = 0;   // frame giocati nella partita corrente
+
+  async function firmaProva(secondi, cuori, frames){
+    const base = secondi.toFixed(1) + '|' + cuori + '|' + frames;
+    const key = await crypto.subtle.importKey(
+      'raw', new TextEncoder().encode(CM_SECRET),
+      { name:'HMAC', hash:'SHA-256' }, false, ['sign']);
+    const mac = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(base));
+    return [...new Uint8Array(mac)].map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
   async function inviaPunteggio(nome, secondi, cuori){
+    const frames = cmFrames;
+    const sig = await firmaProva(secondi, cuori, frames);
     const r = await fetch(API, {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({nome, secondi, cuori})
+      body: JSON.stringify({ nome, secondi, cuori, prova:{ frames, sig } })
     });
     if(!r.ok) throw new Error('HTTP '+r.status);
     return r.json();
@@ -83,6 +107,23 @@
     user-select:none;-webkit-user-select:none;touch-action:none;cursor:pointer}
   .cm-pad:active{background:#b85c38}
   .cm-J{width:clamp(78px,22vw,110px);font-size:clamp(10px,2.8vw,14px);font-weight:bold}
+  .cm-exit{display:none;position:absolute;top:10px;right:10px;z-index:8;width:34px;height:34px;
+    border-radius:50%;border:2px solid #e8c98a;background:rgba(44,36,25,.6);color:#f9f4ed;
+    font-size:15px;line-height:1;cursor:pointer;align-items:center;justify-content:center;padding:0}
+  .cm-rotate{display:none;position:absolute;inset:0;z-index:7;flex-direction:column;align-items:center;
+    justify-content:center;gap:12px;background:rgba(70,20,19,.94);text-align:center;padding:20px}
+  .cm-rotate-ico{font-size:40px;animation:cmRotate 1.6s ease-in-out infinite}
+  .cm-rotate p{font-family:'Trebuchet MS',sans-serif;color:#f9f4ed;font-size:14px;max-width:260px;line-height:1.5;margin:0}
+  @keyframes cmRotate{0%,100%{transform:rotate(0deg)}50%{transform:rotate(90deg)}}
+  .cm-box.cm-full{position:fixed;inset:0;z-index:9999;width:100vw;height:100vh;max-width:none;
+    margin:0;box-sizing:border-box;background:#1a1512;
+    padding:10px calc(10px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left))}
+  .cm-box.cm-full .cm-title{display:none}
+  .cm-box.cm-full .cm-wrap{flex:1 1 auto;width:100%;height:100%;border:none;border-radius:0;box-shadow:none}
+  .cm-box.cm-full .cm-cv{width:100%;height:100%;object-fit:contain}
+  .cm-box.cm-full .cm-exit{display:flex}
+  .cm-box.cm-full .cm-ctrl{position:absolute;left:16px;right:16px;bottom:16px;z-index:6}
+  @media (orientation:portrait){ .cm-box.cm-full .cm-rotate{display:flex} }
   `;
 
   const HTML = `
@@ -90,6 +131,11 @@
   <div class="cm-wrap">
     <canvas class="cm-cv" width="800" height="400"></canvas>
     <div class="cm-hud"></div>
+    <button class="cm-exit" type="button" aria-label="Esci da schermo intero">&#10005;</button>
+    <div class="cm-rotate">
+      <div class="cm-rotate-ico">&#128241;</div>
+      <p>Ruota il telefono in orizzontale per giocare a schermo intero</p>
+    </div>
     <div class="cm-msg">
       <h2>Raggiungi lo Sposo!</h2>
       <p>Salta le piattaforme, schiva i cuori spezzati e corri tra le braccia di Stefano.
@@ -121,6 +167,7 @@
   const W = 800, H = 400, G = 0.62, LEVEL_END = 4600;
   const hud = root.querySelector('.cm-hud'), msg = root.querySelector('.cm-msg');
     let goBtn = root.querySelector('.cm-go');
+    const exitBtn = root.querySelector('.cm-exit');
 
   const keys = {};
   window.addEventListener('keydown', e => { keys[e.code] = true; if(['Space','ArrowUp','ArrowLeft','ArrowRight','ArrowDown'].includes(e.code)) e.preventDefault(); });
@@ -169,18 +216,19 @@
   ];
   const GAPS = [[900,980],[1500,1580],[2000,2080],[2380,2460],[3020,3100],[3440,3520],[4120,4200]];
 
-  let p, coins, enem, cam, state, kisses, timeLeft, last;
+  let p, coins, enem, cam, state, kisses, timeLeft, last, paused = false;
 
   function reset(){
     p = {x:60,y:250,w:34,h:58,vx:0,vy:0,onG:false,face:1,inv:0,bob:0,anim:0};
     coins = COINS.map(c => ({...c, got:false, t:Math.random()*6}));
     enem  = ENEM.map(e => ({...e, alive:true, w:30, h:30}));
-    cam = 0; kisses = 3; timeLeft = 100; state = 'play'; last = performance.now();
+    cam = 0; kisses = 3; timeLeft = 100; state = 'play'; last = performance.now(); cmFrames = 0;
   }
 
   function hit(a,b){ return a.x < b.x+b.w && a.x+a.w > b.x && a.y < b.y+b.h && a.y+a.h > b.y; }
 
   function update(dt){
+    cmFrames++;
     timeLeft -= dt/1000;
     if(timeLeft <= 0){ state = 'lose'; show('Tempo scaduto!','Stefano ti aspetta ancora... riprova!'); return; }
 
@@ -437,11 +485,53 @@
 
   function loop(now){
     const dt = Math.min(34, now - last); last = now;
-    if(state === 'play'){ update(dt); draw(); }
+    if(state === 'play' && !paused){ update(dt); draw(); }
     requestAnimationFrame(loop);
   }
 
-  function start(){ msg.classList.add('cm-hide'); reset(); }
+  // --- schermo intero + rotazione (solo touch: su desktop il gioco resta
+  // incorporato nella pagina cosi' com'e') ---
+  function isLandscape(){ return matchMedia('(orientation:landscape)').matches; }
+
+  function enterFull(){
+    root.classList.add('cm-full');
+    // Fullscreen sull'intero root (non solo .cm-wrap): i tasti touch (.cm-ctrl)
+    // sono fratelli di .cm-wrap, se andasse in fullscreen solo lui resterebbero
+    // fuori dall'elemento fullscreen e sparirebbero dallo schermo.
+    const req = root.requestFullscreen || root.webkitRequestFullscreen;
+    if(req){
+      const p = req.call(root);
+      if(p && p.catch) p.catch(()=>{});
+    }
+    if(screen.orientation && screen.orientation.lock){
+      screen.orientation.lock('landscape').catch(()=>{});
+    }
+  }
+  function exitFull(){
+    root.classList.remove('cm-full');
+    if(document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(()=>{});
+    if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
+  }
+  exitBtn.onclick = exitFull;
+  document.addEventListener('fullscreenchange', () => {
+    if(!document.fullscreenElement) root.classList.remove('cm-full');
+  });
+  matchMedia('(orientation:landscape)').addEventListener('change', e => {
+    if(!root.classList.contains('cm-full')) return;
+    if(e.matches) paused = false;
+    else if(state === 'play') paused = true;
+  });
+
+  function start(){
+    msg.classList.add('cm-hide');
+    if(isTouch){
+      enterFull();
+      paused = !isLandscape();
+    } else {
+      paused = false;
+    }
+    reset();
+  }
   goBtn.onclick = start;
   reset(); draw();
   requestAnimationFrame(loop);
