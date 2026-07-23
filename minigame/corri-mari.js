@@ -13,6 +13,22 @@
   const FW = 120, FH = 200;    // frame sposa (4: idle, corsa1, corsa2, salto)
   const GFW = 120, GFH = 200;  // frame sposo (2: fermo, braccia aperte)
 
+  // ---- cielo in base all'ora di chi gioca ------------------------------
+  // Mattina, tramonto (il tema base del sito) o notte: si sceglie una sola
+  // volta all'apertura del gioco, guardando l'orologio del dispositivo.
+  const CIELI = {
+    mattina:  { top:'#bcd9e8', bottom:'#f5efe6', colline:'#7a8c6e', ambiente:'nuvole', tinta:'rgba(255,255,255,.8)' },
+    tramonto: { top:'#461413', bottom:'#8a4a34', colline:'#6e3226', ambiente:'nuvole', tinta:'rgba(242,227,213,.55)' },
+    notte:    { top:'#0d1220', bottom:'#251f3d', colline:'#171a2c', ambiente:'stelle', tinta:'rgba(255,255,255,.9)' }
+  };
+  function fasciaOraria(){
+    const h = new Date().getHours();
+    if(h >= 21 || h < 6) return 'notte';
+    if(h >= 17) return 'tramonto';
+    return 'mattina';
+  }
+  const SKY = CIELI[fasciaOraria()];
+
   // ---- classifica -----------------------------------------------------
   // Endpoint dell'API su Vercel. Cambia qui se lo monti su un path diverso.
   const API = (window.CORRI_MARI_API || '/api/score');
@@ -353,10 +369,22 @@
 
   // --- drawing ---
   function cloud(x,y,s){
-    ctx.fillStyle='rgba(242,227,213,.55)';
+    ctx.fillStyle=SKY.tinta;
     ctx.beginPath();
     ctx.arc(x,y,18*s,0,7); ctx.arc(x+22*s,y-8*s,22*s,0,7); ctx.arc(x+46*s,y,17*s,0,7);
     ctx.fill();
+  }
+  function star(x,y,s,seed){
+    const tw = 0.45 + 0.4*Math.sin(Date.now()/450 + seed*1.7);
+    ctx.fillStyle='rgba(255,255,255,'+tw.toFixed(2)+')';
+    ctx.beginPath(); ctx.arc(x, y, 1.7*s, 0, 7); ctx.fill();
+  }
+  function luna(){
+    ctx.save();
+    ctx.fillStyle='rgba(232,201,138,.92)';
+    ctx.shadowColor='rgba(232,201,138,.5)'; ctx.shadowBlur=20;
+    ctx.beginPath(); ctx.arc(W-90, 58, 24, 0, 7); ctx.fill();
+    ctx.restore();
   }
   function heart(x,y,s,col){
     ctx.fillStyle=col; ctx.beginPath();
@@ -379,15 +407,17 @@
   function draw(){
     // sky
     const g = ctx.createLinearGradient(0,0,0,H);
-    g.addColorStop(0,'#461413'); g.addColorStop(1,'#8a4a34');   // tramonto bordeaux del sito
+    g.addColorStop(0,SKY.top); g.addColorStop(1,SKY.bottom);
     ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
 
+    if(SKY.ambiente === 'stelle') luna();
     for(let i=0;i<9;i++){
       const cx = ((i*430 - cam*0.25) % (W+300)) - 150;
-      cloud(cx, 50 + (i%3)*42, 0.7 + (i%2)*0.35);
+      if(SKY.ambiente === 'stelle') star(cx, 30 + (i%4)*55, 1 + (i%3)*0.6, i);
+      else cloud(cx, 50 + (i%3)*42, 0.7 + (i%2)*0.35);
     }
     // hills
-    ctx.fillStyle='#6e3226';
+    ctx.fillStyle=SKY.colline;
     for(let i=0;i<8;i++){
       const hx = ((i*380 - cam*0.5) % (W+400)) - 200;
       ctx.beginPath(); ctx.arc(hx, 380, 110, Math.PI, 0); ctx.fill();

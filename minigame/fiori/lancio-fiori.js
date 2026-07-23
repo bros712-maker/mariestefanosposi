@@ -37,6 +37,22 @@
     verde: '#7a9a5c'
   };
 
+  // --- sfondo in base all'ora di chi gioca (mattina/tramonto/notte) ---
+  // La cornice del gioco (bordo, titolo) resta sempre nei colori del sito;
+  // cambia solo il fondale, come per "Corri Mari!".
+  const CIELI = {
+    mattina:  { fondo1:'#f3d9c9', fondo2:'#fbeee2', stelle:false },
+    tramonto: { fondo1:'#461413', fondo2:'#5c221e', stelle:false },
+    notte:    { fondo1:'#0d0a1a', fondo2:'#221c38', stelle:true }
+  };
+  function fasciaOraria(){
+    const h = new Date().getHours();
+    if(h >= 21 || h < 6) return 'notte';
+    if(h >= 17) return 'tramonto';
+    return 'mattina';
+  }
+  const SKY = CIELI[fasciaOraria()];
+
   // --- dimensioni: PORTRAIT, pensato per il telefono ---
   const W = 420, H = 600;
   const GROUND = H - 96;
@@ -340,10 +356,19 @@
       ctx.save();
       ctx.translate(shake, shake * 0.6);
 
-      // sfondo: gradiente bordeaux del sito + archi decorativi
+      // sfondo: gradiente in base all'ora + archi decorativi
       const g = ctx.createLinearGradient(0, 0, 0, H);
-      g.addColorStop(0, C.fondo1); g.addColorStop(1, C.fondo2);
+      g.addColorStop(0, SKY.fondo1); g.addColorStop(1, SKY.fondo2);
       ctx.fillStyle = g; ctx.fillRect(-8, -8, W + 16, H + 16);
+
+      if (SKY.stelle) {
+        for (let i = 0; i < 12; i++) {
+          const sx = (i * 53) % W, sy = (i * 37) % 150;
+          const tw = 0.4 + 0.4 * Math.sin(Date.now() / 450 + i * 1.6);
+          ctx.fillStyle = 'rgba(255,255,255,' + tw.toFixed(2) + ')';
+          ctx.beginPath(); ctx.arc(sx, sy, 1.5, 0, 7); ctx.fill();
+        }
+      }
 
       // arco floreale in alto (stile partecipazione)
       ctx.strokeStyle = C.rame; ctx.lineWidth = 3; ctx.globalAlpha = 0.5;
